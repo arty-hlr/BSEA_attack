@@ -5,11 +5,10 @@ if [ ! $1 ] || [ ! $2 ]; then
   exit 1
 fi
 
-START=1
-while [[ $i -le $1 ]]
+for (( i = 0; i < $1; i++ ))
 do
   ./backdoor ./tests/key$i ./tests/output$i $2
-  ((i = i + 1))
+  dieharder -a -f ./tests/output$i > ./tests/stats_output$i
 done
 
 python3 averageTime.py
