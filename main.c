@@ -7,11 +7,21 @@ int main(int argc, char *argv[]) {
   clock_t start, end;
   double cpu_time_used;
 
-
   dword R0 = 0;
-  qword R1=0, R2=0, R3=0;
-  keyGen(keyFileName);
-  regSetup(keyFileName, &R0, &R1, &R2, &R3);
+  qword R1=0;
+  qword R2=0;
+  qword R3=0;
+  if (atoi(argv[1]) == -1) {
+    R0 = -1;
+    R1 = -1;
+    R2 = -1;
+    R3 = -1;
+  }
+  else {
+    keyGen(keyFileName);
+    regSetup(keyFileName, &R0, &R1, &R2, &R3);
+  }
+
   byte boolFunc = BOOLFUNC1;
 
   FILE *filePtr = fopen(outputFileName, "wb");
