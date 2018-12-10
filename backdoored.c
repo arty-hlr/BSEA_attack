@@ -106,30 +106,20 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
   // printf("[DEBUG] State of the registers: 0x%lx, 0x%lx, 0x%lx, 0x%lx\n", *R0, *R1, *R2, *R3);
 }
 
-bit parity(qword R) {
-	R ^= R>>32;
-	R ^= R>>16;
-	R ^= R>>8;
-	R ^= R>>4;
-	R ^= R>>2;
-	R ^= R>>1;
-	return(R&1);
-}
-
 byte getBits(qword R1, qword R2, qword R3) {
   byte out = 0;
-  out = parity(R3 & R3OUT);
+  out = __builtin_parityll(R3 & R3OUT);
   out <<= 1;
-  out |= parity(R2 & R2OUT);
+  out |= __builtin_parityll(R2 & R2OUT);
   out <<= 1;
-  out |= parity(R1 & R1OUT);
+  out |= __builtin_parityll(R1 & R1OUT);
   return(out);
 }
 
 void clockAll(qword *R1, qword *R2, qword *R3) {
-  bit tappedR1 = parity((*R1) & R1TAPS);
-  bit tappedR2 = parity((*R2) & R2TAPS);
-  bit tappedR3 = parity((*R3) & R3TAPS);
+  bit tappedR1 = __builtin_parityll((*R1) & R1TAPS);
+  bit tappedR2 = __builtin_parityll((*R2) & R2TAPS);
+  bit tappedR3 = __builtin_parityll((*R3) & R3TAPS);
   (*R1) <<= 1;
   (*R1) &= R1MASK;
   (*R1) |= tappedR1;
@@ -149,7 +139,7 @@ void clockR0p(dword *R0, byte p) {
   bit tappedR0 = 0;
   int i = 0;
   do {
-    tappedR0 = parity((*R0) & R0TAPS);
+    tappedR0 = __builtin_parityll((*R0) & R0TAPS);
     (*R0) <<= 1;
     (*R0) &= R0MASK;
     (*R0) |= tappedR0;

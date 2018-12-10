@@ -12,10 +12,10 @@ int main(int argc, char *argv[]) {
   qword R2=0;
   qword R3=0;
   if (atoi(argv[1]) == -1) {
-    R0 = -1;
-    R1 = -1;
-    R2 = -1;
-    R3 = -1;
+    R0 = -1 & R0MASK;
+    R1 = -1 & R1MASK;
+    R2 = -1 & R2MASK;
+    R3 = -1 & R3MASK;
   }
   else {
     keyGen(keyFileName);

@@ -40,7 +40,6 @@ typedef byte bit;
 
 void keyGen(char *keyFileName);
 void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3);
-bit parity(qword R);
 byte getBits(qword R1, qword R2, qword R3);
 void clockAll(qword *R1, qword *R2, qword *R3);
 
