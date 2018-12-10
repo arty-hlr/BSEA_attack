@@ -15,5 +15,6 @@ int main (int argc, char *argv[]) {
   char *fileName = argv[1];
   int size = atoi(argv[2]);
   bbattery_RabbitFile (fileName, size);
+  printf("rabbit test for %s done\n", fileName);
   return 0;
 }
