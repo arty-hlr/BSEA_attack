@@ -132,7 +132,11 @@ void clockAll(qword *R1, qword *R2, qword *R3) {
 }
 
 byte getpfromR0(dword R0) {
-  return((R0 >> 27) + 1);
+  byte p = 0;
+  p += R0 >> 28;
+  p += 2*((R0 >> 27) & ONE);
+  p++;
+  return(p);
 }
 
 void clockR0p(dword *R0, byte p) {
@@ -156,5 +160,9 @@ void XORboolFunc(byte *boolFunc, byte toXOR) {
 }
 
 bit outputBoolFunc(byte boolFunc, byte input) {
-  return((boolFunc >> input) & ONE);
+  // byte mask = ONE << input;
+  // byte masked = boolFunc & mask;
+  // bit toReturn = __builtin_parityll(masked);
+  // return(masked);
+  return(__builtin_parityll(boolFunc & (ONE << input)));
 }

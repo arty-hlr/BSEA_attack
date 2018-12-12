@@ -14,9 +14,9 @@ int main(int argc, char *argv[]) {
   }
 
   dword R0 = 0;
-  qword R1=0;
-  qword R2=0;
-  qword R3=0;
+  qword R1 = 0;
+  qword R2 = 0;
+  qword R3 = 0;
   if (atoi(argv[2]) == -1) {
     R0 = -1 & R0MASK;
     R1 = -1 & R1MASK;
@@ -33,7 +33,6 @@ int main(int argc, char *argv[]) {
 
   FILE *filePtr = fopen(outputFileName, "wb");
   int i = 0;
-  int j = 0;
   byte p = 0;
   byte toXOR = 0;
   byte input = 0;
@@ -42,25 +41,30 @@ int main(int argc, char *argv[]) {
 
   start = clock();
   while(i <= numberOfBytes) {
+    // printf("%d: ", i);
+    // printf("%d\n", input);
     p = getpfromR0(R0);
-    // printf("[DEBUG] p is 0x%x\n", p);
+    // printf("%d\n", p);
     clockR0p(&R0, p);
     // printf("[DEBUG] R0 is 0x%x\n", R0);
     toXOR = get8bitVector(R0);
+    // printf("[DEBUG] R0-vector is %x\n", toXOR);
     XORboolFunc(&boolFunc, toXOR);
+    // printf("%x\n", boolFunc);
     input = getBits(R1, R2, R3);
     clockAll(&R1, &R2, &R3);
+    // printf("%lx\n", R3);
     outputBit = outputBoolFunc(boolFunc, input);
+    // printf("%d", outputBit);
+    // if(i%8 == 7)
+    //   printf(" ");
 
-    if(j == 8) {
-      j = 0;
+    if(((i%8) == 0) && (i != 0)) {
       fwrite(&output, sizeof(byte), 1, filePtr);
       output = 0;
     }
 
-    output <<= 1;
-    output |= outputBit;
-    j++;
+    output |= (outputBit << (7-(i%8)));
     i++;
   }
   end = clock();
