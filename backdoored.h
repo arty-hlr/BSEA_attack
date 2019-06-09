@@ -9,16 +9,15 @@
 #define R2MASK 0x000007FFFFFFFFFF // 43 bits
 #define R3MASK 0x0001FFFFFFFFFFFF // 49 bits
 
-#define R0OUT  0x000000FF // bits 0 through 7 (the 8 lowest bits)
+#define R0VECTOR 0xFF // b21 through b28
 #define R1OUT  0x0000010000000000 // bit 40 (the high bit)
 #define R2OUT  0x0000040000000000 // bit 42 (the high bit)
 #define R3OUT  0x0001000000000000 // bit 48 (the high bit)
-#define R0VECTOR 0xFF // bits 21 through 28
 
 #define ONE 0x1
 
 /*  Feedback taps to clock the shift registers.
- *  These correspond to the primitive polynomials:
+ *  These correspond to the primitive polynomials (reversed as we shift to the left):
  *  x^29 + x^22 + x^16 + x^15 + x^11 + x^3 + 1
  *  x^41 + x^40 + x^32 + x^20 + x^12 + x^11 + 1
  *  x^43 + x^35 + x^32 + x^30 + x^25  x^8 + 1

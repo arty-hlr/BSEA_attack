@@ -1,14 +1,16 @@
 #include "backdoored.h"
 
+// Generate a random 162-bits key and write it to keyFileName
 void keyGen(char *keyFileName) {
   byte key[21] = {0};
   getrandom(&key, 21, 0);
-  key[20] &= 0xF0;
+  key[20] &= 0xFC;
   FILE *filePtr = fopen(keyFileName, "wb");
   fwrite(key, sizeof(byte), 21, filePtr);
   fclose(filePtr);
 }
 
+// Initialize the registers with the key stored in binary in keyFileName
 void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
   FILE *filePtr = fopen(keyFileName, "rb");
 
@@ -30,7 +32,6 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
       (*R0) |= (ONE & (read >> j));
       if(++l >= 29)
         break;
-      // printf("[DEBUG] R0 is 0x%lx\n", *R0);
       (*R0) <<= 1;
       j++;
     }
@@ -51,7 +52,6 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
       (*R1) |= (ONE & (read >> j));
       if(++l >= 41)
         break;
-      // printf("[DEBUG] R1 is 0x%lx\n", *R1);
       (*R1) <<= 1;
       j++;
     }
@@ -72,7 +72,6 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
       (*R2) |= (ONE & (read >> j));
       if(++l >= 43)
         break;
-      // printf("[DEBUG] R2 is 0x%lx\n", *R2);
       (*R2) <<= 1;
       j++;
     }
@@ -93,7 +92,6 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
       (*R3) |= (ONE & (read >> j));
       if(++l >= 49)
         break;
-      // printf("[DEBUG] R3 is 0x%lx\n", *R3);
       (*R3) <<= 1;
       j++;
     }
@@ -103,9 +101,9 @@ void regSetup(char *keyFileName, dword *R0, qword *R1, qword *R2, qword *R3) {
   *R1 &= R1MASK;
   *R2 &= R2MASK;
   *R3 &= R3MASK;
-  // printf("[DEBUG] State of the registers: 0x%lx, 0x%lx, 0x%lx, 0x%lx\n", *R0, *R1, *R2, *R3);
 }
 
+// Get x1, x2, and x3, the left-most bits of R1, R2, and R3
 byte getBits(qword R1, qword R2, qword R3) {
   byte out = 0;
   out = __builtin_parityll(R3 & R3OUT);
@@ -116,6 +114,7 @@ byte getBits(qword R1, qword R2, qword R3) {
   return(out);
 }
 
+// Clock R1, R2, and R3 once each
 void clockAll(qword *R1, qword *R2, qword *R3) {
   bit tappedR1 = __builtin_parityll((*R1) & R1TAPS);
   bit tappedR2 = __builtin_parityll((*R2) & R2TAPS);
@@ -131,6 +130,7 @@ void clockAll(qword *R1, qword *R2, qword *R3) {
   (*R3) |= tappedR3;
 }
 
+// Compute p from b0 and b1 of R0
 byte getpfromR0(dword R0) {
   byte p = 0;
   p += R0 >> 28;
@@ -139,6 +139,7 @@ byte getpfromR0(dword R0) {
   return(p);
 }
 
+// Clock the R0 register p times
 void clockR0p(dword *R0, byte p) {
   bit tappedR0 = 0;
   int i = 0;
@@ -151,18 +152,17 @@ void clockR0p(dword *R0, byte p) {
   } while (i < p);
 }
 
+// Return the 8 bit vector b21...b28
 byte get8bitVector(dword R0) {
   return(R0 & R0VECTOR);
 }
 
+// XOR the 8 bit vector b21...b28 to the boolean function
 void XORboolFunc(byte *boolFunc, byte toXOR) {
   (*boolFunc) ^= toXOR;
 }
 
+// Output the input-th bit of the boolean function
 bit outputBoolFunc(byte boolFunc, byte input) {
-  // byte mask = ONE << input;
-  // byte masked = boolFunc & mask;
-  // bit toReturn = __builtin_parityll(masked);
-  // return(masked);
   return(__builtin_parityll(boolFunc & (ONE << input)));
 }
