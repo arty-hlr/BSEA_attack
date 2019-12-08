@@ -1,3 +1,14 @@
+# BSEA attack
+
+From research done with Eric Filiol at ESIEA on stream ciphers, see paper in repository
+
+# TO DO
+
++ Update code and presentation with latest algorithm
++ Implement attack from paper
+
+# Presentation of the old algorithm
+
 Here is a short presentation of the algorithm as well as its implementation.
 
 There are 4 LFSR with different lengths: R0 is 29 bits long, R1 is 41 bits long, R2 is 43 bits long, and R3 is 49 bits long. There is also a boolean function that gets modified by the output of R0 as we will describe later and takes the output of R1, R2, and R3 as parameters to give the output bit of the algorithm at each tick of the clock. This function is described by its truth table represented as a byte in hex, like so: 9B, AE, or 2D.
